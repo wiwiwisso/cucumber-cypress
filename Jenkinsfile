@@ -30,11 +30,11 @@ pipeline {
             archiveArtifacts artifacts: 'cypress/cucumber-json/*.cucumber.json', allowEmptyArchive: true
 
             // Publier les résultats des tests avec le plugin Cucumber
-            cucumber(
-                reportFiles: 'cypress/cucumber-json/*.cucumber.json',
-                fileIncludePattern: '**/*.cucumber.json',
-                failedTestsFile: 'cucumber-report.json'
-            )
+            // cucumber(
+            //     reportFiles: 'cypress/cucumber-json/*.cucumber.json',
+            //     fileIncludePattern: '**/*.cucumber.json',
+            //     failedTestsFile: 'cucumber-report.json'
+            // )
         }
     }
 }
