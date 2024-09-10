@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Cloner le dépôt GitHub
-                git url: 'https://github.com/hocinilotfi/cucumber-cypress.git', credentialsId: 'votre-credential-id'
+                git branch: 'main', credentialsId: '', url: 'https://github.com/hocinilotfi/cucumber-cypress.git' 
             }
         }
 
