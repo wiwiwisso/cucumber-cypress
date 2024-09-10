@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/hocinilotfi/cucumber-cypress.git', credentialsId: ''
+                git branch: 'main', credentialsId: '', url: 'https://github.com/hocinilotfi/cucumber-cypress.git'
             }
         }
 
