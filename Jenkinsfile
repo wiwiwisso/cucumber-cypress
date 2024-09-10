@@ -4,26 +4,19 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', credentialsId: '', url: 'https://github.com/hocinilotfi/cucumber-cypress.git'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    // Construisez l'image Docker pour Cypress avec Node.js
-                    docker.build('my-cypress-image')
-                }
+                // Cloner le dépôt GitHub
+                git url: 'https://github.com/hocinilotfi/cucumber-cypress.git', credentialsId: 'votre-credential-id'
             }
         }
 
         stage('Test') {
             steps {
                 script {
-                    docker.image('my-cypress-image').inside {
-                        // Exécutez les tests Cypress
-                        sh 'npx cypress run'
-                        // Générer le rapport
+                    // Utiliser l'image officielle Cypress avec toutes les dépendances
+                    docker.image('cypress/included:13.14.2').inside {
+                        // Installer les dépendances
+                        sh 'npm install'
+                        // Exécuter la commande pour générer le rapport
                         sh 'npm run cy:report-firefox'
                     }
                 }
@@ -33,15 +26,15 @@ pipeline {
 
     post {
         always {
-            // Archive le rapport JSON généré
+            // Archiver les rapports JSON générés
             archiveArtifacts artifacts: 'cypress/cucumber-json/*.cucumber.json', allowEmptyArchive: true
 
-            // // Publier les résultats de Cucumber
-            // cucumber(
-            //     reportFiles: 'cypress/cucumber-json/login.cucumber.json',
-            //     fileIncludePattern: '**/*.cucumber.json',
-            //     failedTestsFile: 'cucumber-report.json'
-            // )
+            // Publier les résultats des tests avec le plugin Cucumber
+            cucumber(
+                reportFiles: 'cypress/cucumber-json/*.cucumber.json',
+                fileIncludePattern: '**/*.cucumber.json',
+                failedTestsFile: 'cucumber-report.json'
+            )
         }
     }
 }
