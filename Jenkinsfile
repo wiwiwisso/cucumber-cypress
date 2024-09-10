@@ -1,47 +1,34 @@
 pipeline {
-    agent any
-
+    agent {
+        docker {
+            image 'cypress/included:latest'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
+    
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', credentialsId: '', url: 'https://github.com/hocinilotfi/cucumber-cypress.git'
+               git branch: 'main', credentialsId: '', url:  'https://github.com/hocinilotfi/cucumber-cypress.git'
             }
         }
-
-        stage('Build Docker Image') {
+        
+        stage('Install Dependencies') {
             steps {
-                script {
-                    // Construisez l'image Docker pour Cypress avec Node.js
-                    docker.build('my-cypress-image')
-                }
+                sh 'npm ci'
             }
         }
-
-        stage('Test') {
+        
+        stage('Run Cypress Tests') {
             steps {
-                script {
-                    docker.image('my-cypress-image').inside {
-                        // Exécutez les tests Cypress
-                        sh 'npx cypress run'
-                        // Générer le rapport
-                        sh 'npm run cy:report-firefox'
-                    }
-                }
+                sh 'cypress run'
             }
         }
     }
-
+    
     post {
         always {
-            // Archive le rapport JSON généré
-            archiveArtifacts artifacts: 'cypress/cucumber-json/*.cucumber.json', allowEmptyArchive: true
-
-            // // Publier les résultats de Cucumber
-            // cucumber(
-            //     reportFiles: 'cypress/cucumber-json/login.cucumber.json',
-            //     fileIncludePattern: '**/*.cucumber.json',
-            //     failedTestsFile: 'cucumber-report.json'
-            // )
+            junit 'cypress/results/**/*.xml'
         }
     }
 }
