@@ -34,7 +34,7 @@ pipeline {
     post {
         always {
             // Archive le rapport JSON généré
-            // archiveArtifacts artifacts: 'cypress/cucumber-json/*.cucumber.json', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'cypress/cucumber-json/*.cucumber.json', allowEmptyArchive: true
 
             // // Publier les résultats de Cucumber
             // cucumber(
