@@ -1,34 +1,25 @@
 pipeline {
     agent {
+    // this image provides everything needed to run Cypress
         docker {
-            image 'cypress/included:latest'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
+            image 'cypress/browsers'
         }
-    }
+     }
     
     stages {
-        stage('Checkout') {
-            steps {
-               git branch: 'main', credentialsId: '', url:  'https://github.com/hocinilotfi/cucumber-cypress.git'
-            }
-        }
-        
-        stage('Install Dependencies') {
+        stage('Install dependencies') {
             steps {
                 sh 'npm ci'
             }
         }
         
+        
         stage('Run Cypress Tests') {
             steps {
-                sh 'cypress run'
-            }
+                
+                sh "npm run cy:run"
+             }
         }
-    }
-    
-    post {
-        always {
-            junit 'cypress/results/**/*.xml'
-        }
-    }
+    }  
+ 
 }
